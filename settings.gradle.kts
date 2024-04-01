@@ -4,4 +4,7 @@ plugins {
 
 rootProject.name = "kafka-example"
 
-include("parallel-consumer-example")
+include(
+    "parallel-consumer-example",
+    "gatling-example"
+)

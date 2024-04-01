@@ -1,0 +1,5 @@
+kafka:
+  bootstrap-address: "localhost:9000,localhost:9001,localhost:9002"
+  consumer:
+    group-id: "parallel.consumer.example"
+    topic: "test.parallel.topic"
