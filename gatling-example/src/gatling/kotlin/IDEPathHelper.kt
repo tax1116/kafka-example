@@ -2,11 +2,10 @@ import java.io.File
 import java.nio.file.Path
 
 object IDEPathHelper {
-
     val gradleBinariesDirectory =
         System.getProperty("java.class.path").split(File.pathSeparator)
             .stream()
-            .map { cpe ->  Path.of(cpe) }
+            .map { cpe -> Path.of(cpe) }
             .filter { cpe -> cpe.endsWith("gatling") }
             .findFirst()
             .get()

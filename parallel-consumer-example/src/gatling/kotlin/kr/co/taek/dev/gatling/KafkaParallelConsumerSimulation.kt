@@ -13,8 +13,9 @@ class KafkaParallelConsumerSimulation : Simulation() {
             .contentTypeHeader("application/json")
             .acceptHeader("*/*")
 
-    private val requestBody = StringBody(
-        """
+    private val requestBody =
+        StringBody(
+            """
             {
                 "key": {
                     "type": "STRING",
@@ -25,9 +26,8 @@ class KafkaParallelConsumerSimulation : Simulation() {
                     "data": "test"
                 }
             }
-        """.trimIndent()
-    )
-
+            """.trimIndent(),
+        )
 
     private val scenario =
         scenario("KafkaParallelConsumerSimulation")
@@ -35,7 +35,7 @@ class KafkaParallelConsumerSimulation : Simulation() {
                 http("SimpleTextMessage")
                     .post("/v3/clusters/MkU3OEVBNTcwNTJENDM2Qk/topics/test.parallel.topic/records")
                     .body(requestBody)
-                    .check(status().`is`(200))
+                    .check(status().`is`(200)),
             )
 
     init {

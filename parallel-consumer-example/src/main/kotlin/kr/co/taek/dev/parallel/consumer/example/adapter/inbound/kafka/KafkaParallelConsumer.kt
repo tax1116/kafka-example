@@ -23,26 +23,29 @@ class KafkaParallelConsumer(
     @Value("\${kafka.consumer.group-id}") groupId: String,
     @Value("\${kafka.consumer.topic}") topic: String,
 ) {
-    private val props = mapOf(
-        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
-        ConsumerConfig.GROUP_ID_CONFIG to groupId,
-        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-        ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false",
-    )
+    private val props =
+        mapOf(
+            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
+            ConsumerConfig.GROUP_ID_CONFIG to groupId,
+            ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+            ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false",
+        )
 
     private val kafkaConsumer = KafkaConsumer<String, String>(props)
 
     // NOTE: batchSize 가 1보다 크면 batch 모드. default batchSize 는 1
     // NOTE: default commitMode 는 PERIODIC_CONSUMER_ASYNCHRONOUS
-    private val parallelConsumerOptions = ParallelConsumerOptions.builder<String, String>()
-        .ordering(ParallelConsumerOptions.ProcessingOrder.UNORDERED) // NOTE: UNOREDRED 일 때, 병렬로 처리됨.
-        .consumer(kafkaConsumer)
-        .build()
+    private val parallelConsumerOptions =
+        ParallelConsumerOptions.builder<String, String>()
+            .ordering(ParallelConsumerOptions.ProcessingOrder.UNORDERED) // NOTE: UNOREDRED 일 때, 병렬로 처리됨.
+            .consumer(kafkaConsumer)
+            .build()
 
-    private val parallelConsumer = ParallelStreamProcessor.createEosStreamProcessor(parallelConsumerOptions)
-        .also { it.subscribe(listOf(topic)) }
+    private val parallelConsumer =
+        ParallelStreamProcessor.createEosStreamProcessor(parallelConsumerOptions)
+            .also { it.subscribe(listOf(topic)) }
 
     @EventListener(ApplicationStartedEvent::class)
     fun consume() {

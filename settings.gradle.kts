@@ -6,5 +6,5 @@ rootProject.name = "kafka-example"
 
 include(
     "parallel-consumer-example",
-    "gatling-example"
+    "gatling-example",
 )
