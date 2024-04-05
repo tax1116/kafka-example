@@ -39,7 +39,7 @@ class KafkaParallelConsumerSimulation : Simulation() {
             )
 
     init {
-        this.setUp(scenario.injectOpen(atOnceUsers(10)))
+        this.setUp(scenario.injectOpen(atOnceUsers(100)))
             .protocols(httpProtocol)
     }
 }

@@ -1,7 +1,6 @@
 package kr.co.taek.dev.parallel.consumer.example.adapter.inbound.kafka
 
 import io.confluent.parallelconsumer.ParallelConsumerOptions
-import io.confluent.parallelconsumer.ParallelStreamProcessor
 import io.confluent.parallelconsumer.internal.DrainingCloseable
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.annotation.PreDestroy
@@ -40,12 +39,20 @@ class KafkaParallelConsumer(
     private val parallelConsumerOptions =
         ParallelConsumerOptions.builder<String, String>()
             .ordering(ParallelConsumerOptions.ProcessingOrder.UNORDERED) // NOTE: UNOREDRED 일 때, 병렬로 처리됨.
+            .maxConcurrency(5)
+            .thresholdForTimeSpendInQueueWarning(Duration.ofSeconds(10))
+            .initialLoadFactor(1)
+            .maximumLoadFactor(5)
             .consumer(kafkaConsumer)
             .build()
 
-    private val parallelConsumer =
-        ParallelStreamProcessor.createEosStreamProcessor(parallelConsumerOptions)
-            .also { it.subscribe(listOf(topic)) }
+    val parallelConsumer =
+        CustomParallelEosStreamProcessor(parallelConsumerOptions).also {
+            it.subscribe(listOf(topic))
+        }
+
+    // ParallelStreamProcessor.createEosStreamProcessor(parallelConsumerOptions)
+    //     .also { it.subscribe(listOf(topic)) }
 
     @EventListener(ApplicationStartedEvent::class)
     fun consume() {
@@ -62,9 +69,15 @@ class KafkaParallelConsumer(
 
     private fun handle(record: ConsumerRecord<String, String>) {
         val startTime: Long = System.currentTimeMillis()
-        Thread.sleep(3000)
+        val random = (1000L..3000L).random()
+        Thread.sleep(random)
         val endTime: Long = System.currentTimeMillis()
 
         log.info { "Received message - topic: ${record.topic()}, partition: ${record.partition()}, offset: ${record.offset()}, key: ${record.key()}, value: ${record.value()}, Elapsed time: ${endTime - startTime}ms" }
     }
 }
+// 5112
+
+// 강제 킬하면 offset 정보가 날아간다.
+
+// bAAECgA=
