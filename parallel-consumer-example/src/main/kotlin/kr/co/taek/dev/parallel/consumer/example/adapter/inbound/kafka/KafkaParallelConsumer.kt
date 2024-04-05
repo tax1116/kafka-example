@@ -41,8 +41,6 @@ class KafkaParallelConsumer(
             .ordering(ParallelConsumerOptions.ProcessingOrder.UNORDERED) // NOTE: UNOREDRED 일 때, 병렬로 처리됨.
             .maxConcurrency(5)
             .thresholdForTimeSpendInQueueWarning(Duration.ofSeconds(10))
-            .initialLoadFactor(1)
-            .maximumLoadFactor(5)
             .consumer(kafkaConsumer)
             .build()
 
